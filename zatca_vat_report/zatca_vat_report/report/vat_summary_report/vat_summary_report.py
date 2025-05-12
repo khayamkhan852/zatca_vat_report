@@ -65,14 +65,14 @@ def get_data(filters, month_labels, months, year):
 
         sales = get_sales(filters, start_date, end_date)
         credit = get_credit(filters, start_date, end_date)
-        net_sales = round(sales - credit, 2)
+        net_sales = round(sales + credit, 2)
 
         purchase = get_purchase(filters, start_date, end_date)
         journal = get_journal_entries(filters, start_date, end_date)
         total_purchase = round(purchase + journal, 2)
 
         debit = get_debit(filters, start_date, end_date)
-        net_purchase = round(total_purchase - debit, 2)
+        net_purchase = round(total_purchase + debit, 2)
         net_vat_payable = round(net_sales - net_purchase, 2)
 
         # Assign values
