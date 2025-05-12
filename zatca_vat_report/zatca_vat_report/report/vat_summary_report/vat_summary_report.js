@@ -11,6 +11,18 @@ frappe.query_reports["VAT Summary Report"] = {
 			"reqd": 1,
 			"default": frappe.defaults.get_default("company"),
 		},
+		{
+			fieldname: "from_date",
+			label: __("From Date"),
+			fieldtype: "Date",
+			reqd: 0
+		},
+		{
+			fieldname: "to_date",
+			label: __("To Date"),
+			fieldtype: "Date",
+			reqd: 0
+		},		
 	],
 	formatter: function(value, row, column, data, default_formatter) {
         value = default_formatter(value, row, column, data);

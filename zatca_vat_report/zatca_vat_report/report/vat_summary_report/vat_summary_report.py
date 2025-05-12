@@ -8,7 +8,7 @@ import datetime
 
 
 def execute(filters=None):
-    month_labels, year, months = get_months()
+    month_labels, year, months = get_months(filters)
 
     columns = get_columns(month_labels)
 
@@ -173,22 +173,58 @@ def get_journal_entries(filters, start_date, end_date):
 
     return round(total, 2)
 
+def get_months(filters):
+    # Use custom date range if given
+    if filters and filters.get("from_date") and filters.get("to_date"):
+        from_date = datetime.datetime.strptime(filters.get("from_date"), "%Y-%m-%d").date()
+        to_date = datetime.datetime.strptime(filters.get("to_date"), "%Y-%m-%d").date()
 
-def get_months():
+        months = []
+        labels = []
+        current = from_date.replace(day=1)
+        while current <= to_date:
+            months.append(current.month)
+            labels.append(calendar.month_abbr[current.month])
+            if current.month == 12:
+                current = current.replace(year=current.year + 1, month=1)
+            else:
+                current = current.replace(month=current.month + 1)
+
+        return labels, from_date.year, months
+
+    # Default: previous quarter based on current month
     today = datetime.date.today()
     current_quarter = (today.month - 1) // 3 + 1
+    prev_quarter = current_quarter - 1
 
-    if current_quarter == 1:
+    if prev_quarter == 0:
+        prev_quarter = 4
         year = today.year - 1
-        start_month = 10
     else:
         year = today.year
-        start_month = 3 * (current_quarter - 2) + 1
 
+    start_month = 3 * (prev_quarter - 1) + 1
     months = [start_month + i for i in range(3)]
-    month_labels = [calendar.month_abbr[m] for m in months]
+    labels = [calendar.month_abbr[m] for m in months]
 
-    return month_labels, year, months
+    return labels, year, months
+
+
+# def get_months():
+#     today = datetime.date.today()
+#     current_quarter = (today.month - 1) // 3 + 1
+
+#     if current_quarter == 1:
+#         year = today.year - 1
+#         start_month = 10
+#     else:
+#         year = today.year
+#         start_month = 3 * (current_quarter - 2) + 1
+
+#     months = [start_month + i for i in range(3)]
+#     month_labels = [calendar.month_abbr[m] for m in months]
+
+#     return month_labels, year, months
 
 # import frappe
 # from frappe import _
